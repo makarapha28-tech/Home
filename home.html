@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="km">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>រូបផ្ទះ ធម្មជាតិ សួនផ្កា និងមនុស្សប្រុសរាំតាមចម្រៀង</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body, html {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            font-family: sans-serif;
+        }
+
+        /* ផ្ទាំងទេសភាពខាងក្រោយ (ផ្លាស់ប្តូរតាមម៉ោង) */
+        .scene {
+            width: 100vw;
+            height: 100vh;
+            position: relative;
+            overflow: hidden;
+            transition: background 2s ease;
+        }
+
+        .scene.morning {
+            background: linear-gradient(to bottom, #ff9a9e 0%, #fecfef 45%, #7ea859 45%, #3d6826 100%);
+        }
+        .scene.day {
+            background: linear-gradient(to bottom, #4a90e2 0%, #a1c4fd 45%, #7ea859 45%, #3d6826 100%);
+        }
+        .scene.evening {
+            background: linear-gradient(to bottom, #e65c00 0%, #F9D423 45%, #556b2f 45%, #223311 100%);
+        }
+        .scene.night {
+            background: linear-gradient(to bottom, #0f2027 0%, #203a43 45%, #1a3311 45%, #0d1a08 100%);
+        }
+
+        /* វាលស្រែ */
+        .field {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            height: 55%;
+            background: linear-gradient(to bottom, #72ab38 0%, #2f5419 100%);
+            transition: filter 2s ease;
+        }
+        .scene.night .field { filter: brightness(0.4); }
+        .scene.evening .field { filter: sepia(0.3) contrast(1.1); }
+
+        /* -------------------------------------------------- */
+        /* ១. ព្រះអាទិត្យ/ព្រះច័ន្ទ មានចលនាចាំងពន្លឺ */
+        /* -------------------------------------------------- */
+        .sun-container {
+            position: absolute;
+            top: 8%;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 2;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: all 2s ease;
+        }
+
+        .sun {
+            width: 70px;
+            height: 70px;
+            background: #ffeb3b;
+            border-radius: 50%;
+            box-shadow: 0 0 20px #ffeb3b, 0 0 40px #ff9800;
+            z-index: 2;
+            transition: background 2s, box-shadow 2s;
+        }
+
+        .scene.night .sun {
+            background: #f5f6fa;
+            box-shadow: 0 0 20px #f5f6fa, 0 0 40px #dcdde1;
+        }
+
+        .sun-rays {
+            position: absolute;
+            width: 140px;
+            height: 140px;
+            background: radial-gradient(circle, rgba(255,235,59,0.4) 0%, rgba(255,235,59,0) 70%);
+            border-radius: 50%;
+            z-index: 1;
+        }
+        .scene.night .sun-rays { display: none; }
+
+        /* -------------------------------------------------- */
+        /* ២. ពពកមានចលនាហោះ */
+        /* -------------------------------------------------- */
+        .cloud {
+            position: absolute;
+            background: #ffffff;
+            border-radius: 50px;
+            opacity: 0.9;
+            filter: drop-shadow(0 3px 5px rgba(0,0,0,0.1));
+            z-index: 3;
+            transition: filter 2s ease, opacity 2s ease;
+        }
+        .scene.night .cloud { opacity: 0.3; filter: brightness(0.4); }
+
+        .cloud::before, .cloud::after {
+            content: '';
+            position: absolute;
+            background: #ffffff;
+            border-radius: 50%;
+        }
+
+        .cloud-1 { width: 120px; height: 40px; top: 10%; left: -150px; }
+        .cloud-1::before { width: 50px; height: 50px; top: -20px; left: 20px; }
+        .cloud-1::after { width: 40px; height: 40px; top: -10px; right: 20px; }
+
+        .cloud-2 { width: 150px; height: 45px; top: 14%; left: -200px; }
+        .cloud-2::before { width: 60px; height: 60px; top: -25px; left: 25px; }
+        .cloud-2::after { width: 45px; height: 45px; top: -15px; right: 25px; }
+
+        .cloud-3 { width: 90px; height: 30px; top: 18%; left: -100px; opacity: 0.8; }
+        .cloud-3::before { width: 35px; height: 35px; top: -15px; left: 15px; }
+        .cloud-3::after { width: 30px; height: 30px; top: -10px; right: 15px; }
+
+        /* -------------------------------------------------- */
+        /* ៣. ផ្ទះ */
+        /* -------------------------------------------------- */
+        .house-container {
+            position: absolute;
+            bottom: 22%;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            z-index: 5;
+            filter: drop-shadow(0px 15px 12px rgba(0,0,0,0.4));
+        }
+
+        .roof {
+            width: 330px;
+            height: 115px;
+            background: linear-gradient(to bottom, #d9534f, #b52b27);
+            clip-path: polygon(12% 0%, 88% 0%, 100% 100%, 0% 100%);
+            position: relative;
+            border-bottom: 5px solid #8b1d1a;
+        }
+
+        .house-body {
+            width: 280px;
+            height: 155px;
+            background-color: #f3c64f;
+            border: 2px solid #d4a328;
+            position: relative;
+        }
+
+        .window {
+            width: 68px;
+            height: 62px;
+            background-color: #2b6cb0;
+            border: 4px solid #1a365d;
+            position: absolute;
+            top: 30px;
+            left: 35px;
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+            transition: background 2s ease, box-shadow 2s ease;
+        }
+        .scene.night .window {
+            background-color: #f1c40f;
+            box-shadow: 0 0 20px #f1c40f;
+        }
+
+        .door {
+            width: 58px;
+            height: 110px;
+            background: #7a431d;
+            border: 3px solid #4a2810;
+            position: absolute;
+            bottom: 0;
+            right: 40px;
+        }
+
+        /* -------------------------------------------------- */
+        /* ៤. សួនផ្ការំអ (ឆ្វេង/ស្ដាំ) */
+        /* -------------------------------------------------- */
+        .flower-garden-left, .flower-garden-right {
+            position: absolute;
+            bottom: 21%;
+            height: 90px;
+            z-index: 6;
+            filter: drop-shadow(1px 3px 4px rgba(0,0,0,0.25));
+        }
+        .flower-garden-left { left: 23%; width: 140px; }
+        .flower-garden-right { right: 23%; width: 140px; }
+        .garden-svg { width: 100%; height: 100%; }
+
+        /* -------------------------------------------------- */
+        /* ៥. ដើមត្នោត និងដើមឈើធំ */
+        /* -------------------------------------------------- */
+        .palm-tree-svg {
+            position: absolute;
+            bottom: 18%;
+            left: 8%;
+            width: 220px;
+            height: 380px;
+            z-index: 4;
+            filter: drop-shadow(2px 5px 4px rgba(0,0,0,0.3));
+        }
+        .animated-wind { transform-origin: 102px 90px; }
+
+        .big-tree-svg {
+            position: absolute;
+            bottom: 18%;
+            right: 6%;
+            width: 280px;
+            height: 360px;
+            z-index: 4;
+            filter: drop-shadow(2px 5px 4px rgba(0,0,0,0.3));
+        }
+        .tree-leaves-animated { transform-origin: 125px 140px; }
+
+        /* -------------------------------------------------- */
+        /* ៦. UI Header, Music Menu & Time */
+        /* -------------------------------------------------- */
+        .ui-header {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            z-index: 10;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .time-display {
+            background: rgba(0, 0, 0, 0.6);
+            color: #fff;
+            padding: 10px 18px;
+            border-radius: 20px;
+            font-size: 14px;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .music-btn {
+            background: linear-gradient(135deg, #ff416c, #ff4b2b);
+            color: white;
+            border: none;
+            padding: 10px 22px;
+            border-radius: 20px;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(255, 75, 43, 0.4);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .music-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 15px rgba(255, 75, 43, 0.6);
+        }
+
+        .music-menu {
+            position: absolute;
+            top: 70px;
+            left: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 12px;
+            padding: 15px;
+            width: 250px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+            z-index: 10;
+            display: none;
+        }
+        .music-menu.active { display: block; }
+        .music-menu h4 {
+            margin-bottom: 10px;
+            color: #333;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 5px;
+        }
+        .song-item {
+            padding: 8px 10px;
+            margin: 5px 0;
+            background: #f8f9fa;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            color: #2c3e50;
+        }
+        .song-item:hover { background: #ffeaa7; }
+
+        /* -------------------------------------------------- */
+        /* ៧. មនុស្សប្រុស និងចលនារាំ (Dancing) */
+        /* -------------------------------------------------- */
+        .workspace-wrapper {
+            position: absolute;
+            bottom: 15%;
+            left: 42%;
+            width: 200px;
+            height: 220px;
+            z-index: 7;
+            filter: drop-shadow(2px 5px 6px rgba(0,0,0,0.3));
+        }
+        .workspace-svg { width: 100%; height: 100%; }
+
+        /* ចលនារាំពេលបើកចម្រៀង */
+        .dancing .man-group {
+            animation: danceBody 0.6s infinite alternate ease-in-out;
+            transform-origin: bottom center;
+        }
+        .dancing .arm-left-front {
+            animation: danceArmLeft 0.5s infinite alternate ease-in-out !important;
+        }
+        .dancing .arm-right-front {
+            animation: danceArmRight 0.5s infinite alternate ease-in-out !important;
+        }
+
+        @keyframes danceBody {
+            0% { transform: translateY(-15px) rotate(-5deg); }
+            100% { transform: translateY(-25px) rotate(5deg); }
+        }
+        @keyframes danceArmLeft {
+            0% { d: path("M80,68 L60,40 L50,60"); }
+            100% { d: path("M80,68 L70,30 L90,20"); }
+        }
+        @keyframes danceArmRight {
+            0% { d: path("M120,68 L130,30 L110,20"); }
+            100% { d: path("M120,68 L140,40 L150,60"); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="scene day" id="scene">
+        <!-- Header / UI -->
+        <div class="ui-header">
+            <button class="music-btn" id="musicToggleBtn">🎵 Music</button>
+            <div class="time-display" id="timeDisplay">ម៉ោងកម្ពុជា: --:--:--</div>
+        </div>
+
+        <!-- ម៉ឺនុយចម្រៀង -->
+        <div class="music-menu" id="musicMenu">
+            <h4>🎼 ជ្រើសរើសបទចម្រៀង</h4>
+            <div class="song-item" onclick="playSong('song1', 'បទចម្រៀងទី ១')">▶️ បទចម្រៀងទី ១</div>
+            <div class="song-item" onclick="playSong('song2', 'បទចម្រៀងទី ២')">▶️ បទចម្រៀងទី ២</div>
+            <div class="song-item" onclick="stopSong()">⏹️ បិទបទចម្រៀង (Stop)</div>
+        </div>
+
+        <!-- ធាតុ Audio -->
+        <audio id="song1" src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3"></audio>
+        <audio id="song2" src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3"></audio>
+
+        <!-- វាលស្រែ -->
+        <div class="field"></div>
+
+        <!-- ព្រះអាទិត្យ/ព្រះច័ន្ទ -->
+        <div class="sun-container">
+            <div class="sun"></div>
+            <div class="sun-rays"></div>
+        </div>
+
+        <!-- ពពកមានចលនា -->
+        <div class="cloud cloud-1"></div>
+        <div class="cloud cloud-2"></div>
+        <div class="cloud cloud-3"></div>
+
+        <!-- ដើមត្នោត -->
+        <svg class="palm-tree-svg" viewBox="0 0 200 350">
+            <path d="M95,350 C92,250 88,180 102,90 C105,90 112,90 110,90 C98,180 102,250 105,350 Z" fill="#5a3d28" />
+            <path d="M94,320 Q100,315 105,320 M93,280 Q100,275 105,280 M92,240 Q100,235 106,240 M93,200 Q101,195 108,200 M96,160 Q102,155 109,160 M99,120 Q104,115 110,120" stroke="#3b2618" stroke-width="3" fill="none" />
+            
+            <g class="animated-wind">
+                <path d="M102,90 Q40,40 10,80 Q45,55 102,90" fill="#2d5a1e" />
+                <path d="M102,90 Q30,70 0,120 Q35,85 102,90" fill="#234717" />
+                <path d="M102,90 Q40,100 20,160 Q48,115 102,90" fill="#1b3812" />
+                <path d="M102,90 Q160,40 190,80 Q155,55 102,90" fill="#2d5a1e" />
+                <path d="M102,90 Q170,70 200,120 Q165,85 102,90" fill="#234717" />
+                <path d="M102,90 Q160,100 180,160 Q152,115 102,90" fill="#1b3812" />
+                <path d="M102,90 Q80,10 60,0 Q85,25 102,90" fill="#386e26" />
+                <path d="M102,90 Q120,10 140,0 Q115,25 102,90" fill="#386e26" />
+                <path d="M102,90 Q100,0 100,-10 Q105,20 102,90" fill="#43822e" />
+            </g>
+        </svg>
+
+        <!-- ផ្ទះ -->
+        <div class="house-container">
+            <div class="roof"></div>
+            <div class="house-body">
+                <div class="window"></div>
+                <div class="door"></div>
+            </div>
+        </div>
+
+        <!-- សួនផ្ការំអខាងឆ្វេងផ្ទះ -->
+        <div class="flower-garden-left">
+            <svg class="garden-svg" viewBox="0 0 140 90">
+                <path d="M5,90 Q30,55 70,70 Q110,50 135,90 Z" fill="#2e6930" />
+                <!-- ផ្កាចំប៉ា -->
+                <g class="champa-flower">
+                    <path d="M25,85 L25,35" stroke="#4a3525" stroke-width="3" />
+                    <circle cx="25" cy="30" r="4" fill="#ffeb3b" />
+                    <ellipse cx="25" cy="22" rx="3" ry="6" fill="#ffffff" />
+                    <ellipse cx="25" cy="38" rx="3" ry="6" fill="#ffffff" />
+                    <ellipse cx="17" cy="30" rx="6" ry="3" fill="#ffffff" />
+                    <ellipse cx="33" cy="30" rx="6" ry="3" fill="#ffffff" />
+                </g>
+                <!-- ផ្កាកុលាប -->
+                <g class="rose-flower">
+                    <path d="M60,85 Q55,60 58,40" stroke="#254d19" stroke-width="2" fill="none" />
+                    <circle cx="58" cy="38" r="9" fill="#e74c3c" />
+                    <circle cx="58" cy="38" r="5" fill="#c0392b" />
+                </g>
+                <!-- ផ្កាសេមាន់ -->
+                <g class="cockscomb-flower">
+                    <path d="M90,85 L90,45" stroke="#1b4d13" stroke-width="3" />
+                    <path d="M80,42 C80,25 100,25 100,42 Q90,32 80,42 Z" fill="#d63031" />
+                </g>
+                <!-- ផ្កាម៉ោង១០ -->
+                <g class="ten-o-clock">
+                    <circle cx="115" cy="70" r="5" fill="#fd79a8" />
+                    <circle cx="100" cy="78" r="4.5" fill="#fdcb6e" />
+                </g>
+            </svg>
+        </div>
+
+        <!-- សួនផ្ការំអខាងស្ដាំផ្ទះ -->
+        <div class="flower-garden-right">
+            <svg class="garden-svg" viewBox="0 0 140 90">
+                <path d="M5,90 Q30,50 70,70 Q110,55 135,90 Z" fill="#2e6930" />
+                <g class="rose-flower-2">
+                    <path d="M30,85 Q35,62 32,42" stroke="#254d19" stroke-width="2" fill="none" />
+                    <circle cx="32" cy="40" r="9" fill="#e84393" />
+                </g>
+                <g class="cockscomb-flower-2">
+                    <path d="M58,85 L58,48" stroke="#1b4d13" stroke-width="3" />
+                    <path d="M50,45 C50,28 66,28 66,45 Q58,35 50,45 Z" fill="#9b59b6" />
+                </g>
+                <g class="champa-flower-2">
+                    <path d="M95,85 L95,38" stroke="#4a3525" stroke-width="3" />
+                    <circle cx="95" cy="32" r="4" fill="#ffeb3b" />
+                    <ellipse cx="95" cy="24" rx="3" ry="6" fill="#ffffff" />
+                    <ellipse cx="95" cy="40" rx="3" ry="6" fill="#ffffff" />
+                    <ellipse cx="87" cy="32" rx="6" ry="3" fill="#ffffff" />
+                    <ellipse cx="103" cy="32" rx="6" ry="3" fill="#ffffff" />
+                </g>
+            </svg>
+        </div>
+
+        <!-- មនុស្ស និងទីតាំងធ្វើការ/រាំ -->
+        <div class="workspace-wrapper" id="workspace">
+            <svg class="workspace-svg" viewBox="0 0 200 220">
+                <rect x="65" y="45" width="70" height="65" rx="5" fill="#2c3e50" />
+                <rect x="60" y="105" width="80" height="10" rx="3" fill="#1a252f" />
+                <rect x="70" y="115" width="8" height="75" fill="#333" />
+                <rect x="122" y="115" width="8" height="75" fill="#333" />
+
+                <g class="man-group">
+                    <g class="legs">
+                        <rect x="82" y="110" width="12" height="70" fill="#34495e" rx="3" />
+                        <rect x="106" y="110" width="12" height="70" fill="#2c3e50" rx="3" />
+                        <path d="M80,180 L96,180 L96,188 L80,192 Z" fill="#6e3b16" />
+                        <path d="M104,180 L120,180 L120,188 L104,192 Z" fill="#582f11" />
+                    </g>
+                    <g class="man-front">
+                        <path d="M85,38 C85,25 115,25 115,38 Z" fill="#2c1d11" />
+                        <circle cx="100" cy="45" r="14" fill="#f1c27d" />
+                        <circle cx="95" cy="45" r="1.5" fill="#333" />
+                        <circle cx="105" cy="45" r="1.5" fill="#333" />
+                        <path d="M96,52 Q100,56 104,52" stroke="#c0392b" stroke-width="1.5" fill="none" />
+                        <path d="M75,68 C75,58 125,58 125,68 L125,110 L75,110 Z" fill="#2980b9" />
+                        <path d="M93,60 L100,72 L107,60 Z" fill="#f1c27d" />
+                        <path class="arm-left-front" d="M80,68 L88,95 L95,95" stroke="#f1c27d" stroke-width="5" stroke-linecap="round" fill="none" />
+                        <path class="arm-right-front" d="M120,68 L112,95 L105,95" stroke="#f1c27d" stroke-width="5" stroke-linecap="round" fill="none" />
+                    </g>
+                </g>
+
+                <rect x="35" y="100" width="130" height="10" fill="#8B4513" rx="2" />
+                <rect x="43" y="110" width="10" height="80" fill="#5c2c06" />
+                <rect x="147" y="110" width="10" height="80" fill="#5c2c06" />
+
+                <g class="laptop-back">
+                    <rect x="82" y="72" width="36" height="24" rx="3" fill="#bdc3c7" stroke="#7f8c8d" stroke-width="1" />
+                    <circle cx="100" cy="84" r="3" fill="#ffffff" />
+                    <ellipse cx="100" cy="98" rx="22" ry="3" fill="#95a5a6" />
+                </g>
+            </svg>
+        </div>
+
+        <!-- ដើមឈើធំ -->
+        <svg class="big-tree-svg" viewBox="0 0 250 320">
+            <path d="M120,320 C115,240 110,180 100,140 C90,120 70,100 50,85 C65,95 85,115 95,130 C105,100 115,80 120,50 C125,80 135,100 145,125 C155,110 175,90 195,80 C175,95 160,115 150,135 C140,170 135,240 130,320 Z" fill="#4a2e1b" />
+            <g class="tree-leaves-animated">
+                <circle cx="60" cy="90" r="45" fill="#1e3f14" />
+                <circle cx="190" cy="85" r="45" fill="#1e3f14" />
+                <circle cx="125" cy="50" r="55" fill="#234a17" />
+                <circle cx="70" cy="80" r="40" fill="#2e5e20" />
+                <circle cx="180" cy="75" r="40" fill="#2e5e20" />
+                <circle cx="125" cy="40" r="50" fill="#376e27" />
+            </g>
+        </svg>
+    </div>
+
+    <!-- -------------------------------------------------- -->
+    <!-- JavaScript បញ្ជាចលនាទាំងអស់ -->
+    <!-- -------------------------------------------------- -->
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+
+            // ១. ចលនាពពកហោះជុំវិញអេក្រង់
+            const clouds = [
+                { element: document.querySelector('.cloud-1'), x: -150, speed: 0.5 },
+                { element: document.querySelector('.cloud-2'), x: -200, speed: 0.3 },
+                { element: document.querySelector('.cloud-3'), x: -100, speed: 0.7 }
+            ];
+
+            function animateClouds() {
+                clouds.forEach(cloud => {
+                    if (cloud.element) {
+                        cloud.x += cloud.speed;
+                        if (cloud.x > window.innerWidth) {
+                            cloud.x = -200;
+                        }
+                        cloud.element.style.transform = `translateX(${cloud.x}px)`;
+                    }
+                });
+                requestAnimationFrame(animateClouds);
+            }
+            animateClouds();
+
+            // ២. ចលនាព្រះអាទិត្យចាំងភ្លឹបភ្លែត
+            const sunRays = document.querySelector('.sun-rays');
+            let scale = 1;
+            let growing = true;
+
+            function animateSunRays() {
+                if (sunRays) {
+                    if (growing) {
+                        scale += 0.003;
+                        if (scale >= 1.25) growing = false;
+                    } else {
+                        scale -= 0.003;
+                        if (scale <= 0.95) growing = true;
+                    }
+                    sunRays.style.transform = `scale(${scale})`;
+                }
+                requestAnimationFrame(animateSunRays);
+            }
+            animateSunRays();
+
+            // ៣. ចលនាដើមត្នោត ដើមឈើ និងផ្កាយោលតាមខ្យល់
+            const palmLeaves = document.querySelector('.animated-wind');
+            const treeLeaves = document.querySelector('.tree-leaves-animated');
+            const gardenLeft = document.querySelector('.flower-garden-left');
+            const gardenRight = document.querySelector('.flower-garden-right');
+            let angle = 0;
+
+            function animateTreesAndFlowers() {
+                angle += 0.03;
+                const swayAmount = Math.sin(angle) * 3.5;
+                const flowerSway = Math.sin(angle * 0.8) * 1.5;
+
+                if (palmLeaves) palmLeaves.style.transform = `rotate(${swayAmount}deg)`;
+                if (treeLeaves) treeLeaves.style.transform = `rotate(${-swayAmount * 0.8}deg)`;
+                if (gardenLeft) gardenLeft.style.transform = `rotate(${flowerSway}deg)`;
+                if (gardenRight) gardenRight.style.transform = `rotate(${-flowerSway}deg)`;
+
+                requestAnimationFrame(animateTreesAndFlowers);
+            }
+            animateTreesAndFlowers();
+
+            // ៤. មុខងារកំណត់ពេលវេលាកម្ពុជា (ព្រឹក ថ្ងៃ ល្ងាច យប់)
+            function updateCambodiaTime() {
+                const now = new Date();
+                const options = { timeZone: 'Asia/Phnom_Penh', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
+                const timeString = new Intl.DateTimeFormat('km-KH', options).format(now);
+                
+                const hours = parseInt(new Intl.DateTimeFormat('en-US', { timeZone: 'Asia/Phnom_Penh', hour: 'numeric', hour12: false }).format(now));
+
+                document.getElementById('timeDisplay').innerText = `ម៉ោងកម្ពុជា: ${timeString}`;
+
+                const scene = document.getElementById('scene');
+                scene.classList.remove('morning', 'day', 'evening', 'night');
+
+                if (hours >= 5 && hours < 11) {
+                    scene.classList.add('morning');
+                } else if (hours >= 11 && hours < 16) {
+                    scene.classList.add('day');
+                } else if (hours >= 16 && hours < 18.5) {
+                    scene.classList.add('evening');
+                } else {
+                    scene.classList.add('night');
+                }
+            }
+            setInterval(updateCambodiaTime, 1000);
+            updateCambodiaTime();
+        });
+
+        // ៥. មុខងារ Music និងចលនារាំ
+        let currentAudio = null;
+        const musicToggleBtn = document.getElementById('musicToggleBtn');
+        const musicMenu = document.getElementById('musicMenu');
+        const workspace = document.getElementById('workspace');
+
+        musicToggleBtn.addEventListener('click', () => {
+            musicMenu.classList.toggle('active');
+        });
+
+        function playSong(songId, songTitle) {
+            if (currentAudio) {
+                currentAudio.pause();
+                currentAudio.currentTime = 0;
+            }
+
+            currentAudio = document.getElementById(songId);
+            if (currentAudio) {
+                currentAudio.play();
+                workspace.classList.add('dancing');
+                musicToggleBtn.innerText = `🎶 កំពុងលេង: ${songTitle}`;
+                musicMenu.classList.remove('active');
+
+                currentAudio.onended = () => {
+                    stopSong();
+                };
+            }
+        }
+
+        function stopSong() {
+            if (currentAudio) {
+                currentAudio.pause();
+                currentAudio.currentTime = 0;
+            }
+            workspace.classList.remove('dancing');
+            musicToggleBtn.innerText = '🎵 Music';
+            musicMenu.classList.remove('active');
+        }
+    </script>
+</body>
+</html>
