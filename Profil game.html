@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gaming Profile</title>
+    <style> 
+        * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: #0f172a;
+    background-image: 
+        radial-gradient(circle at 10% 20%, rgba(0, 255, 255, 0.05) 0%, transparent 40%),
+        radial-gradient(circle at 90% 80%, rgba(0, 128, 255, 0.05) 0%, transparent 40%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.profile-card {
+    background: #1e293b;
+    color: #fff;
+    border-radius: 20px;
+    padding: 30px 25px;
+    text-align: center;
+    width: 350px;
+    box-shadow: 0 0 25px rgba(0, 255, 255, 0.2), inset 0 0 15px rgba(0, 255, 255, 0.05);
+    border: 1px solid rgba(0, 255, 255, 0.2);
+    position: relative;
+    overflow: hidden;
+}
+
+/* Avatar Styling with Neon Border */
+.avatar-container {
+    position: relative;
+    width: 130px;
+    height: 130px;
+    margin: 0 auto 20px auto;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #00ffff, #0044ff);
+    padding: 4px;
+    box-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+}
+
+.avatar {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    background: #0f172a;
+}
+
+.username {
+    font-size: 26px;
+    font-weight: 700;
+    margin-bottom: 5px;
+    letter-spacing: 0.5px;
+}
+
+.role {
+    color: #38bdf8;
+    font-size: 15px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    margin-bottom: 25px;
+}
+
+/* Stats Section */
+.stats {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 25px;
+}
+
+.stat-box {
+    background: #0f172a;
+    flex: 1;
+    padding: 15px 10px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.stat-box:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(0, 255, 255, 0.2);
+    border-color: rgba(0, 255, 255, 0.3);
+}
+
+.stat-box i {
+    font-size: 18px;
+    margin-bottom: 8px;
+    display: block;
+}
+
+.icon-level { color: #a855f7; }
+.icon-wins { color: #eab308; }
+.icon-games { color: #22c55e; }
+
+.stat-label {
+    display: block;
+    font-size: 12px;
+    color: #94a3b8;
+    margin-bottom: 5px;
+    text-transform: uppercase;
+}
+
+.stat-value {
+    font-size: 18px;
+    color: #ffffff;
+}
+
+/* Button */
+.follow-btn {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #00ffff, #0077ff);
+    color: #0f172a;
+    font-weight: bold;
+    font-size: 15px;
+    cursor: pointer;
+    transition: opacity 0.3s ease, box-shadow 0.3s ease;
+    box-shadow: 0 0 15px rgba(0, 255, 255, 0.4);
+}
+
+.follow-btn:hover {
+    opacity: 0.9;
+    box-shadow: 0 0 25px rgba(0, 255, 255, 0.7);
+}
+    </style>
+    <!-- FontAwesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+    <div class="profile-card">
+        <!-- Avatar with neon glow ring -->
+        <div class="avatar-container">
+            <img src="Photo/Runn bora.jpg" alt="Gamer Avatar" class="avatar">
+        </div>
+
+        <h2 class="username">Runn Bora</h2>
+        <p class="role">Pro Gamer</p>
+
+        <!-- Stats Grid -->
+        <div class="stats">
+            <div class="stat-box">
+                <i class="fa-solid fa-gamepad icon-level"></i>
+                <span class="stat-label">Level</span>
+                <b class="stat-value">42</b>
+            </div>
+            <div class="stat-box">
+                <i class="fa-solid fa-trophy icon-wins"></i>
+                <span class="stat-label">Wins</span>
+                <b class="stat-value">20000</b>
+            </div>
+            <div class="stat-box">
+                <i class="fa-solid fa-dice icon-games"></i>
+                <span class="stat-label">Games</span>
+                <b class="stat-value">256</b>
+            </div>
+        </div>
+
+        <!-- Interactive Button -->
+        <button class="follow-btn" id="followBtn">Follow Player</button>
+    </div>
+
+    <script>
+        // បន្ថែមមុខងារអន្តរកម្មពេលចុចលើปุ่ม Follow
+const followBtn = document.getElementById('followBtn');
+
+let isFollowing = false;
+
+followBtn.addEventListener('click', () => {
+    isFollowing = !isFollowing;
+    if (isFollowing) {
+        followBtn.textContent = 'Following ✓';
+        followBtn.style.background = 'linear-gradient(135deg, #22c55e, #15803d)';
+        followBtn.style.color = '#ffffff';
+        followBtn.style.boxShadow = '0 0 15px rgba(34, 197, 94, 0.4)';
+    } else {
+        followBtn.textContent = 'Follow Player';
+        followBtn.style.background = 'linear-gradient(135deg, #00ffff, #0077ff)';
+        followBtn.style.color = '#0f172a';
+        followBtn.style.boxShadow = '0 0 15px rgba(0, 255, 255, 0.4)';
+    }
+});
+    </script>
+</body>
+</html>
